@@ -20,6 +20,7 @@ export const Select = styled.select`
 
 export const FormBtn = styled.button`
   background-color: #175637;
+  color: #fff;
   padding: 10px 40px;
   border: none;
 `;
