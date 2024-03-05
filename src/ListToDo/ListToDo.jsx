@@ -1,15 +1,20 @@
-import data from "../todo.json"; 
-import { Item, Level, List, Text, Title } from "./ListToDo.styled"; 
-export const ListToDo = () => { 
-    return ( 
-        <List> 
-            {data.map(({ title, description, level, id, status}) => ( 
-                <Item status={status} level={level} key={id}> 
-                    <Title>{title}</Title> 
-                    <Text>{description}</Text> 
-                    <Level>{level}</Level> 
-                </Item> 
-            ))} 
-        </List> 
-    ); 
-};
+
+import { List } from "./ListToDo.styled";
+import { ItemToDo } from "ItemToDo/ItemToDo";
+export function ListToDo({ list, onDelete }) {
+  return (
+    <List>
+      {list.map(({ title, description, level, id, status }) => (
+        <ItemToDo
+          key={id}
+          title={title}
+          description={description}
+          level={level}
+          id={id}
+          status={status}
+          onDelete={onDelete}
+        ></ItemToDo>
+      ))}
+    </List>
+  );
+}

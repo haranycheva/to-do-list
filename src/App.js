@@ -1,16 +1,42 @@
 import { GlobalStyled } from "GlobalStyle.style";
+import { nanoid } from 'nanoid'
 import { ListToDo } from "ListToDo/ListToDo";
-import { FormToDo2 } from "FormToDo/FormToDo";
+import { FormToDo } from "FormToDo/FormToDo";
 import Clicker from "Try/Clicker";
+import { Component } from "react";
+import data from "./todo.json";
 
-export function App() {
-  return (
-    <>
-    <GlobalStyled/>
-    <Clicker/>
-      <FormToDo2>
-      </FormToDo2>
-      <ListToDo></ListToDo>
-    </>
-  );
+export class App extends Component {
+  state = {
+    list: data,
+  };
+  handleAddItem = (item) => {
+    console.log(item)
+    this.setState(({list}) => ({
+      list: [
+        ...list,
+        { ...item, id: nanoid()}
+      ],
+    }));
+  };
+  handleDelete = (deleteId) => {
+    this.setState(({ list }) => ({
+      list: list.filter((el) => el.id !== deleteId),
+    }));
+  };
+  render() {
+    return (
+      <>
+        <GlobalStyled />
+        <Clicker />
+        <FormToDo
+        onAdd={this.handleAddItem}
+        ></FormToDo>
+        <ListToDo
+          list={this.state.list}
+          onDelete={this.handleDelete}
+        ></ListToDo>
+      </>
+    );
+  }
 }
