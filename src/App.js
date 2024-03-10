@@ -28,7 +28,6 @@ export class App extends Component {
     return (
       <>
         <GlobalStyled />
-        <Clicker />
         <FormToDo
         onAdd={this.handleAddItem}
         ></FormToDo>

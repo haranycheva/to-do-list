@@ -2,7 +2,7 @@ import { colors } from "../constants";
 import styled from "styled-components";
 
 const getColor = ({ level }) => {
-    switch (level) {
+    switch (Number(level)) {
       case 1:
         return colors.LEVEL_ONE;
       case 2:
