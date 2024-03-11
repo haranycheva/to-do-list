@@ -2,12 +2,12 @@ import { colors } from "../constants";
 import styled from "styled-components";
 
 const getColor = ({ level }) => {
-    switch (Number(level)) {
-      case 1:
+    switch (level) {
+      case "hard":
         return colors.LEVEL_ONE;
-      case 2:
+      case "medium":
         return colors.LEVEL_TWO;
-      case 3:
+      case "easy":
         return colors.LEVEL_THREE;
       default:
         break;
@@ -50,7 +50,7 @@ const getColor = ({ level }) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 25px;
+    width: 65px;
     height: 25px;
     border: 1px solid black;
   `;

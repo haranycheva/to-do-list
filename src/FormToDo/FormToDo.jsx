@@ -1,14 +1,13 @@
 import { Component } from "react";
 import * as Yup from "yup";
 import { Title, FormBtn, FormToDO, InputText, Select} from "./FormToDo.styled";
-// import { InputToDo } from "InputToDo/InputToDo";
-import { Formik, Field, ErrorMessage } from "formik";
+import { Formik, ErrorMessage } from "formik";
 const schemaValidation = Yup.object({
   title: Yup.string()
     .min(2, "must be min 2 simbols")
     .required("Title must be required"),
   description: Yup.string().required("Title must be required"),
-  level: Yup.number().oneOf([1, 2, 3]).required("Title must be required"),
+  level: Yup.string().oneOf(["easy", "medium", "hard"]).required("Title must be required"),
 });
 export class FormToDo extends Component {
   // handleSubmit = (e) => {
