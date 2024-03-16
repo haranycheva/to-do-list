@@ -5,4 +5,7 @@ export const GlobalStyled = createGlobalStyle`
   h2 {
     margin: 0;
   }
+  p{
+    margin: 0;
+  }
 `;

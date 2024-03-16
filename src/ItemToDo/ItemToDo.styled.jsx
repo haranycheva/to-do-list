@@ -1,6 +1,13 @@
 import { colors } from "../constants";
 import styled from "styled-components";
 
+function getSelected({ selected }) {
+  if (!selected) {
+    return "solid";
+  }
+  return "double";
+}
+
 const getColor = ({ level }) => {
     switch (level) {
       case "hard":
@@ -28,7 +35,7 @@ const getColor = ({ level }) => {
     position: relative;
     width: calc((100% - 150px) / 3);
     padding: 10px;
-    border: 4px solid ${getColor};
+    border: 4px ${getSelected} ${getColor};
     margin-bottom: 10px;
     background-color: ${getComp};
   `;
