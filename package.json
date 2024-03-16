@@ -2,7 +2,7 @@
   "name": "to-do-list",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Zetonen.github.io/react-template/",
+  "homepage": "https://haranycheva.github.io/to-do-list/",
   "dependencies": {
     "formik": "^2.4.5",
     "json": "^11.0.0",
