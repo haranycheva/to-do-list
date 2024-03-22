@@ -1,5 +1,4 @@
 import { GlobalStyled } from "GlobalStyle.style";
-import { nanoid } from "nanoid";
 import { ListToDo } from "ListToDo/ListToDo";
 import { FormToDo } from "FormToDo/FormToDo";
 import { Component } from "react";
@@ -15,15 +14,22 @@ export class App extends Component {
     showModal: false,
     showDeleteModal: false,
     deleteEl: null,
+    error: null,
     selected: localStorage.getItem("selected")
       ? JSON.parse(localStorage.getItem("selected"))
       : null,
   };
   async componentDidMount() {
     this.setState({ isLoading: true });
-    const data = await getToDo();
-    this.setState({ list: data });
-    this.setState({ isLoading: false });
+    try {
+      const data = await getToDo();
+      this.setState({ list: data });
+    } catch (error) {
+      console.log("err");
+      this.setState({error})
+    } finally{
+      this.setState({ isLoading: false });
+    }
   }
   componentDidUpdate(_, prevState) {
     const { selected } = this.state;
@@ -33,10 +39,15 @@ export class App extends Component {
   }
   handleAddItem = async (item) => {
     this.setState({ isLoading: true });
-    await postToDo(item);
-    const data = await getToDo();
-    this.setState({ list: data });
-    this.setState({ isLoading: false });
+    try {
+      await postToDo(item);
+      const data = await getToDo();
+      this.setState({ list: data });
+    } catch (error) {
+      this.setState({error})
+    } finally{
+      this.setState({ isLoading: false });
+    }
   };
   toggleDeleteModal = (id) => {
     this.setState(({ showDeleteModal }) => {
@@ -46,12 +57,16 @@ export class App extends Component {
   };
   handleDelete = () => {
     this.setState(({ list, selected, deleteEl }) => {
-      deleteToDo(deleteEl);
+      try {
+        deleteToDo(deleteEl);
       return {
         selected: selected?.id === deleteEl ? "" : selected,
         list: list.filter((el) => el.id !== deleteEl),
         deletedEl: null,
       };
+      } catch (error) {
+        this.setState({error})
+      }
     });
     this.toggleDeleteModal();
   };
@@ -65,6 +80,8 @@ export class App extends Component {
     this.setState({ selected: { id, title, description } });
   };
   render() {
+    const { isLoading, error, list} = this.state;
+
     return (
       <>
         <GlobalStyled />
@@ -72,10 +89,11 @@ export class App extends Component {
           open
         </button>
         <FormToDo onAdd={this.handleAddItem}></FormToDo>
-        {this.state.isLoading ? (
+        {error && <p>Ooooooooooops.... Something went wrong.....</p>}
+        {isLoading && 
           <p>is loading....</p>
-        ) : (
-          <ListToDo
+        }
+          {list.length > 0 && (<ListToDo
             list={this.state.list}
             onDelete={this.toggleDeleteModal}
             selected={this.state.selected}
