@@ -17,7 +17,6 @@ export function ItemToDo({
       <Level>{level}</Level>
       <ButtonDel
         onClick={(e) => {
-          console.log(onDelete)
           onDelete(id);
         }}
       >

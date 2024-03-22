@@ -3,14 +3,14 @@ import { nanoid } from "nanoid";
 import { ListToDo } from "ListToDo/ListToDo";
 import { FormToDo } from "FormToDo/FormToDo";
 import { Component } from "react";
-import data from "./todo.json";
 import { Modal } from "Modal/Modal";
 import { PresentationBox } from "PresentationBox/PresentationBox";
 import { ModalForDelete } from "ModalForDelete/ModalForDelete";
+import { deleteToDo, postToDo, getToDo } from "Try/fetch";
 
 export class App extends Component {
   state = {
-    list: data,
+    list: [],
     isLoading: false,
     showModal: false,
     showDeleteModal: false,
@@ -19,28 +19,24 @@ export class App extends Component {
       ? JSON.parse(localStorage.getItem("selected"))
       : null,
   };
-  componentDidMount() {
+  async componentDidMount() {
     this.setState({ isLoading: true });
-    const data = localStorage.getItem("todo");
-    const parseData = JSON.parse(data);
-    if (parseData) {
-      this.setState({ list: parseData });
-    }
+    const data = await getToDo();
+    this.setState({ list: data });
     this.setState({ isLoading: false });
   }
-  componentDidUpdate(prevProps, prevState) {
-    const { list, selected } = this.state;
-    if (prevState.list !== list) {
-      localStorage.setItem("todo", JSON.stringify(list));
-    }
+  componentDidUpdate(_, prevState) {
+    const { selected } = this.state;
     if (prevState.selected.id !== selected.id) {
       localStorage.setItem("selected", JSON.stringify(selected));
     }
   }
-  handleAddItem = (item) => {
-    this.setState(({ list }) => ({
-      list: [...list, { ...item, id: nanoid() }],
-    }));
+  handleAddItem = async (item) => {
+    this.setState({ isLoading: true });
+    await postToDo(item);
+    const data = await getToDo();
+    this.setState({ list: data });
+    this.setState({ isLoading: false });
   };
   toggleDeleteModal = (id) => {
     this.setState(({ showDeleteModal }) => {
@@ -50,14 +46,14 @@ export class App extends Component {
   };
   handleDelete = () => {
     this.setState(({ list, selected, deleteEl }) => {
-      console.log(deleteEl);
+      deleteToDo(deleteEl);
       return {
         selected: selected?.id === deleteEl ? "" : selected,
         list: list.filter((el) => el.id !== deleteEl),
         deletedEl: null,
       };
     });
-    this.toggleDeleteModal()
+    this.toggleDeleteModal();
   };
   toggleModal = () => {
     this.setState(({ showModal }) => ({ showModal: !showModal }));
