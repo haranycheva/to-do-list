@@ -17,7 +17,7 @@ export class App extends Component {
     deleteEl: null,
     selected: localStorage.getItem("selected")
       ? JSON.parse(localStorage.getItem("selected"))
-      : "",
+      : null,
   };
   componentDidMount() {
     this.setState({ isLoading: true });
@@ -52,7 +52,7 @@ export class App extends Component {
     this.setState(({ list, selected, deleteEl }) => {
       console.log(deleteEl);
       return {
-        selected: selected.id === deleteEl ? "" : selected,
+        selected: selected?.id === deleteEl ? "" : selected,
         list: list.filter((el) => el.id !== deleteEl),
         deletedEl: null,
       };
