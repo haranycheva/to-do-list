@@ -1,10 +1,9 @@
-
 import { List } from "./ListToDo.styled";
 import { ItemToDo } from "ItemToDo/ItemToDo";
-export function ListToDo({ list, onDelete, selected, onClick,}) {
+export function ListToDo({ list, onDelete, selected, onClick }) {
   return (
     <List>
-      {list.map(({ title, description, level, id, status}) => (
+      {list.map(({ title, description, level, id, status }) => (
         <ItemToDo
           key={id}
           title={title}

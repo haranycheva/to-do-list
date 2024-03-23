@@ -26,8 +26,8 @@ export class App extends Component {
       this.setState({ list: data });
     } catch (error) {
       console.log("err");
-      this.setState({error})
-    } finally{
+      this.setState({ error });
+    } finally {
       this.setState({ isLoading: false });
     }
   }
@@ -40,12 +40,11 @@ export class App extends Component {
   handleAddItem = async (item) => {
     this.setState({ isLoading: true });
     try {
-      await postToDo(item);
-      const data = await getToDo();
-      this.setState({ list: data });
+      const data = await postToDo(item);
+      this.setState(({ list }) => ({ list: [...list, data] }));
     } catch (error) {
-      this.setState({error})
-    } finally{
+      this.setState({ error });
+    } finally {
       this.setState({ isLoading: false });
     }
   };
@@ -59,13 +58,13 @@ export class App extends Component {
     this.setState(({ list, selected, deleteEl }) => {
       try {
         deleteToDo(deleteEl);
-      return {
-        selected: selected?.id === deleteEl ? "" : selected,
-        list: list.filter((el) => el.id !== deleteEl),
-        deletedEl: null,
-      };
+        return {
+          selected: selected?.id === deleteEl ? "" : selected,
+          list: list.filter((el) => el.id !== deleteEl),
+          deletedEl: null,
+        };
       } catch (error) {
-        this.setState({error})
+        this.setState({ error });
       }
     });
     this.toggleDeleteModal();
@@ -80,8 +79,7 @@ export class App extends Component {
     this.setState({ selected: { id, title, description } });
   };
   render() {
-    const { isLoading, error, list} = this.state;
-
+    const { isLoading, error, list } = this.state;
     return (
       <>
         <GlobalStyled />
@@ -90,10 +88,9 @@ export class App extends Component {
         </button>
         <FormToDo onAdd={this.handleAddItem}></FormToDo>
         {error && <p>Ooooooooooops.... Something went wrong.....</p>}
-        {isLoading && 
-          <p>is loading....</p>
-        }
-          {list.length > 0 && (<ListToDo
+        {isLoading && <p>is loading....</p>}
+        {list.length > 0 && (
+          <ListToDo
             list={this.state.list}
             onDelete={this.toggleDeleteModal}
             selected={this.state.selected}
