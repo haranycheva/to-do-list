@@ -1,28 +1,17 @@
-const BASE__URL = "https://65ef66c8ead08fa78a5065ee.mockapi.io/tasks";
+import axios from "axios";
 
-export function postToDo(task) {
-  const options = {
-    method: 'POST',
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify(task),
-  };
-  return fetch(`${BASE__URL}`, options).then((res) => res.json());
+axios.defaults.baseURL = "https://65ef66c8ead08fa78a5065ee.mockapi.io/tasks";
+
+export async function postToDo(task) {
+  const res =  await axios.post("", task)
+  return res.data
 }
 
 export function deleteToDo(idToDelete) {
-    const options = {
-      method: 'DELETE',
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    };
-    return fetch(`${BASE__URL}/${idToDelete}`, options).then((res) => res.json());
+    return axios.delete(`/${idToDelete}`)
   }
 
-export function getToDo() {
-  return fetch(`${BASE__URL}`).then((res) => res.json());
+export async function getToDo() {
+  const res = await axios.get("")
+  return res.data
 }
