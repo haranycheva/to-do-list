@@ -54,19 +54,20 @@ export class App extends Component {
       return { showDeleteModal: !showDeleteModal, deleteEl: todel };
     });
   };
-  handleDelete = () => {
-    this.setState(({ list, selected, deleteEl }) => {
-      try {
-        deleteToDo(deleteEl);
+  handleDelete = async () => {
+    try {
+      const data =await deleteToDo(this.state.deleteEl);
+      this.setState(({ list, selected }) => {
         return {
-          selected: selected?.id === deleteEl ? "" : selected,
-          list: list.filter((el) => el.id !== deleteEl),
+          selected: selected?.id === data.id ? "" : selected,
+          list: list.filter((el) => el.id !== data.id),
           deletedEl: null,
         };
-      } catch (error) {
-        this.setState({ error });
-      }
-    });
+      });
+    } catch (error) {
+      this.setState({ error });
+    }
+    console.log();
     this.toggleDeleteModal();
   };
   toggleModal = () => {
