@@ -40,8 +40,8 @@ export class App extends Component {
   handleAddItem = async (item) => {
     this.setState({ isLoading: true });
     try {
-      const data = await postToDo(item);
-      this.setState(({ list }) => ({ list: [...list, data] }));
+      const dataAdd = await postToDo(item);
+      this.setState(({ list }) => ({ list: [...list, dataAdd] }));
     } catch (error) {
       this.setState({ error });
     } finally {
@@ -56,11 +56,11 @@ export class App extends Component {
   };
   handleDelete = async () => {
     try {
-      const data =await deleteToDo(this.state.deleteEl);
+      const dataDel =await deleteToDo(this.state.deleteEl);
       this.setState(({ list, selected }) => {
         return {
-          selected: selected?.id === data.id ? "" : selected,
-          list: list.filter((el) => el.id !== data.id),
+          selected: selected?.id === dataDel.id ? "" : selected,
+          list: list.filter((el) => el.id !== dataDel.id),
           deletedEl: null,
         };
       });
