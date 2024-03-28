@@ -5,11 +5,16 @@ import { Component } from "react";
 import { Modal } from "Modal/Modal";
 import { PresentationBox } from "PresentationBox/PresentationBox";
 import { ModalForDelete } from "ModalForDelete/ModalForDelete";
-import { deleteToDo, postToDo, getToDo } from "Try/fetch";
+import { deleteToDo, postToDo, getToDo } from "fetch";
+import { Loader } from "Loader/Loader";
+import toast, { Toaster } from "react-hot-toast";
+import { FilterForm } from "FilterForm/FilterForm";
 
 export class App extends Component {
   state = {
     list: [],
+    filteredList: [],
+    toFilter: false,
     isLoading: false,
     showModal: false,
     showDeleteModal: false,
@@ -38,10 +43,11 @@ export class App extends Component {
     }
   }
   handleAddItem = async (item) => {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, error: null });
     try {
       const dataAdd = await postToDo(item);
       this.setState(({ list }) => ({ list: [...list, dataAdd] }));
+      toast.success("Success 👻");
     } catch (error) {
       this.setState({ error });
     } finally {
@@ -50,25 +56,27 @@ export class App extends Component {
   };
   toggleDeleteModal = (id) => {
     this.setState(({ showDeleteModal }) => {
-      const todel = !showDeleteModal ? id : "";
+      const todel = !showDeleteModal ? id : null;
       return { showDeleteModal: !showDeleteModal, deleteEl: todel };
     });
   };
   handleDelete = async () => {
+    this.setState({ isLoading: true, error: null });
     try {
-      const dataDel =await deleteToDo(this.state.deleteEl);
+      const dataDel = await deleteToDo(this.state.deleteEl);
       this.setState(({ list, selected }) => {
         return {
           selected: selected?.id === dataDel.id ? "" : selected,
           list: list.filter((el) => el.id !== dataDel.id),
-          deletedEl: null,
         };
       });
+      toast.success("Success 👻");
     } catch (error) {
       this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
+      this.toggleDeleteModal();
     }
-    console.log();
-    this.toggleDeleteModal();
   };
   toggleModal = () => {
     this.setState(({ showModal }) => ({ showModal: !showModal }));
@@ -79,20 +87,44 @@ export class App extends Component {
     }
     this.setState({ selected: { id, title, description } });
   };
+  handleFilter = async ({ textForFilter, levelForFilter }) => {
+    this.setState({ isLoading: true });
+    try {
+      this.setState(({ list }) => ({
+        filteredList: list.filter(
+          ({ title, level }) =>
+            title.toLowerCase().includes(textForFilter) &&
+            level === levelForFilter
+        )
+      }));
+      this.setState({toFilter: true})
+    } catch (error) {
+      console.log("err");
+      this.setState({ error });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+  };
+  handleResetFilters = () =>{
+    this.setState({toFilter: false})
+  }
   render() {
-    const { isLoading, error, list } = this.state;
+    const { isLoading, error, list, toFilter, filteredList } = this.state;
     return (
       <>
         <GlobalStyled />
+        <Toaster position="top-center" reverseOrder={false} />
         <button type="button" onClick={this.toggleModal}>
           open
         </button>
         <FormToDo onAdd={this.handleAddItem}></FormToDo>
+        <FilterForm onFilter={this.handleFilter} />
+        <button type="button" onClick={this.handleResetFilters}>reset filters</button>
         {error && <p>Ooooooooooops.... Something went wrong.....</p>}
-        {isLoading && <p>is loading....</p>}
+        {isLoading && <Loader />}
         {list.length > 0 && (
           <ListToDo
-            list={this.state.list}
+            list={toFilter ? filteredList : list}
             onDelete={this.toggleDeleteModal}
             selected={this.state.selected}
             onClick={this.handleClick}
