@@ -13,8 +13,7 @@ import { FilterForm } from "FilterForm/FilterForm";
 export class App extends Component {
   state = {
     list: [],
-    filteredList: [],
-    toFilter: false,
+    filters: { title: "", level: "all" },
     isLoading: false,
     showModal: false,
     showDeleteModal: false,
@@ -87,29 +86,25 @@ export class App extends Component {
     }
     this.setState({ selected: { id, title, description } });
   };
-  handleFilter = async ({ textForFilter, levelForFilter }) => {
-    this.setState({ isLoading: true });
-    try {
-      this.setState(({ list }) => ({
-        filteredList: list.filter(
-          ({ title, level }) =>
-            title.toLowerCase().includes(textForFilter) &&
-            level === levelForFilter
-        )
-      }));
-      this.setState({toFilter: true})
-    } catch (error) {
-      console.log("err");
-      this.setState({ error });
-    } finally {
-      this.setState({ isLoading: false });
-    }
+  handleFilterChange = (filterName, filterValue) => {
+    this.setState((prevState) => ({
+      filters: { ...prevState.filters, [filterName]: filterValue },
+    }));
   };
-  handleResetFilters = () =>{
-    this.setState({toFilter: false})
-  }
+  toFilter = (filters, list) => {
+    if (filters.level === "all") {
+      return list.filter((item) =>
+        item.title.toLowerCase().includes(filters.title.toLowerCase())
+      );
+    }
+    return list.filter(
+      (item) =>
+        item.title.toLowerCase().includes(filters.title.toLowerCase()) &&
+        item.level === filters.level
+    );
+  };
   render() {
-    const { isLoading, error, list, toFilter, filteredList } = this.state;
+    const { isLoading, error, list, filters } = this.state;
     return (
       <>
         <GlobalStyled />
@@ -118,13 +113,16 @@ export class App extends Component {
           open
         </button>
         <FormToDo onAdd={this.handleAddItem}></FormToDo>
-        <FilterForm onFilter={this.handleFilter} />
-        <button type="button" onClick={this.handleResetFilters}>reset filters</button>
+        <FilterForm
+          onFilterChange={this.handleFilterChange}
+          valueTitle={filters.title}
+          valueLevel={filters.level}
+        />
         {error && <p>Ooooooooooops.... Something went wrong.....</p>}
         {isLoading && <Loader />}
         {list.length > 0 && (
           <ListToDo
-            list={toFilter ? filteredList : list}
+            list={this.toFilter(filters, list)}
             onDelete={this.toggleDeleteModal}
             selected={this.state.selected}
             onClick={this.handleClick}

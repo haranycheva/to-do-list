@@ -6,3 +6,5 @@ export const colors = {
     LEVEL_ONE: "#ffff00", 
     COMPLETE: "#00ff70", 
 }
+
+export const levels = ["easy", "medium", "hard"]
